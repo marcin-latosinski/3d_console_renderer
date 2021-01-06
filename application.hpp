@@ -8,7 +8,7 @@ class Application
 public:
     Application() : console_engine(), projection_engine()
     {
-
+        
     }
 
     ~Application()
@@ -18,11 +18,11 @@ public:
 
     void OnElapsedTime(float time_elapsed)
     {
-        
+
     }
 
 private:
 
-    ConsoleEngine console_engine;
-    ProjectionEngine projection_engine;
-}
+    ConsoleEngine* console_engine;
+    ProjectionEngine* projection_engine;
+};
