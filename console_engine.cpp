@@ -115,3 +115,4 @@ void ConsoleEngine::DrawTopFlatTriangle(const point_2d& point_1, const point_2d&
 {
 
 }
+

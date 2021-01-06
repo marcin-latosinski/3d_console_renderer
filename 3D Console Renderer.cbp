@@ -38,11 +38,12 @@
 			<Add option="-fexceptions" />
 			<Add option="-DUNICODE" />
 		</Compiler>
-		<Unit filename="engine.cpp" />
-		<Unit filename="engine.hpp" />
+		<Unit filename="application.hpp" />
+		<Unit filename="console_engine.cpp" />
+		<Unit filename="console_engine.hpp" />
 		<Unit filename="geometry_structures.hpp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="projection.hpp" />
+		<Unit filename="projection_engine.hpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

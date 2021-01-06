@@ -17,7 +17,7 @@ struct vertex_3d
 
 struct face_3d
 {
-    vertex_3d vertex[N_VERTICES_IN_POLYGON];
+    vertex_3d vertex[N_VERTICES_IN_POLYGON] = { 0.f, 0.f, 0.f };
 };
 
 struct object_3d
