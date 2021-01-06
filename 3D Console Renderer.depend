@@ -44,3 +44,13 @@
 	<windows.h>
 	<cstring>
 
+1609953479 source:c:\dev\3d_console_renderer\console_engine.cpp
+	"console_engine.hpp"
+	<math.h>
+	<iostream>
+	<cstring>
+
+1609953286 c:\dev\3d_console_renderer\console_engine.hpp
+	"geometry_structures.hpp"
+	<windows.h>
+
