@@ -10,7 +10,7 @@ struct matrix_4x4
     float c[4][4] = { 0.f };
 };
 
-struct vect_hom
+struct vect_homo
 {
     float x, y, z, w = { 0.f };
 };
@@ -48,9 +48,9 @@ private:
     {
         proj_mat.c[0][0] = 1.f / tanf((fov/2.f) * PI()/180.f);
         proj_mat.c[1][1] = 1.f / tanf((fov/2.f) * PI()/180.f);
-        proj_mat.c[3][3] = (-1.f * z_clip_far) / (z_clip_far - z_clip_near);
-        proj_mat.c[4][3] = (-1.f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
-        proj_mat.c[3][4] = (-1.f);
+        proj_mat.c[2][2] = (-1.f * z_clip_far) / (z_clip_far - z_clip_near);
+        proj_mat.c[3][2] = (-1.f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
+        proj_mat.c[2][3] = (-1.f);
 
     }
 
