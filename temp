@@ -1,0 +1,122 @@
+#include <windows.h>
+#include <iostream>
+#include <cstring>
+#include <cstdint>
+
+using namespace std;
+
+void draw_line(float x, float y)
+{
+}
+
+class Engine
+{
+public:
+    Engine()
+    {
+        output_hnd = GetStdHandle(STD_OUTPUT_HANDLE);
+        window_hnd = GetConsoleWindow();
+    }
+
+    void InitScreen()
+    {
+        CONSOLE_FONT_INFOEX font_info = {sizeof(font_info),
+                                     0,
+                                     10,
+                                     10,
+                                     FF_DONTCARE,
+                                     FW_NORMAL};
+        wcscpy(font_info.FaceName, L"Consolas");
+        SetCurrentConsoleFontEx(output_hnd, FALSE, &font_info);
+
+        max_screen_size = GetLargestConsoleWindowSize(output_hnd);
+
+        screen_width = max_screen_size.X;
+        screen_height = max_screen_size.Y;
+
+        console_size.Right  = screen_width - 1;
+        console_size.Bottom = screen_height - 1;
+        console_size.Left   = 0;
+        console_size.Top    = 0;
+
+        if (!GetConsoleScreenBufferInfo(output_hnd, &buff_info))
+        {
+            std::printf("get consoles screen bufer info failed with %d\n", GetLastError());
+        }
+
+        // If the Current Buffer is Larger than what we want, Resize the
+        // Console Window First, then the Buffer
+        if(buff_info.dwSize.X * buff_info.dwSize.Y > (DWORD) screen_width * screen_height)
+        {
+            if (!SetConsoleWindowInfo(output_hnd, true, &console_size))
+            {
+                DWORD last_error = GetLastError();
+                std::printf("SetConsoleWindowInfo failed with %d \n", last_error);
+            }
+            if (!SetConsoleScreenBufferSize(output_hnd, max_screen_size))
+            {
+                std::printf("SetConsoleScreenBufferSize failed with %d \n", GetLastError());
+            }
+        }
+
+        // If the Current Buffer is Smaller than what we want, Resize the
+        // Buffer First, then the Console Window
+        if(buff_info.dwSize.X * buff_info.dwSize.Y < (DWORD) screen_width * screen_height )
+        {
+            if (!SetConsoleScreenBufferSize(output_hnd, max_screen_size))
+            {
+                std::printf("SetConsoleScreenBufferSize failed with %d \n", GetLastError());
+            }
+            if (!SetConsoleWindowInfo(output_hnd, true, &console_size))
+            {
+                std::printf("SetConsoleWindofInfo failed with %d \n", GetLastError());
+            }
+        }
+
+        // if (!SetConsoleActiveScreenBuffer(output_hnd))
+        // {
+        //     std::printf("setactviescreenbuffer failed with %d\n", GetLastError());
+        // }
+
+        buffer = new CHAR_INFO[screen_width * screen_height];
+        std::memset(buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
+    }
+
+    void WriteToConsoleOutput()
+    {
+        if(!WriteConsoleOutput(output_hnd, buffer, max_screen_size, {0, 0}, &console_size) )
+        {
+            std::printf("writeConsoleOutput failed! %d", GetLastError());
+        }
+    }
+
+    void DrawPixel(uint16_t x_cord, uint16_t y_cord)
+    {
+        buffer[x_cord + y_cord * screen_width].Char.UnicodeChar = 0x2588;
+        buffer[x_cord + y_cord * screen_width].Attributes = 0x000F;
+    }
+
+    uint16_t screen_width;
+    uint16_t screen_height;
+private:
+    HANDLE output_hnd;
+    HWND window_hnd;
+    COORD max_screen_size;
+    CONSOLE_SCREEN_BUFFER_INFO buff_info;
+    SMALL_RECT console_size;
+    CHAR_INFO* buffer;
+};
+
+int main()
+{
+    Engine* engine = new Engine();
+    engine->InitScreen();
+
+    engine->DrawPixel(0, 0);
+    engine->DrawPixel(0, engine->screen_width);
+    engine->DrawPixel(engine->screen_height, 0);
+    engine->DrawPixel(engine->screen_height, engine->screen_width);
+
+    engine->WriteToConsoleOutput();
+    return 0;
+}

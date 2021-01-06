@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1609879185 source:c:\dev\3d console renderer\main.cpp
+	<windows.h>
+	<iostream>
+	<cstring>
+	<cstdint>
+	<math.h>
+
+1609886047 source:c:\dev\3d_renderer\main.cpp
+	"engine.hpp"
+	<windows.h>
+	<cstring>
+
+1609893310 source:c:\dev\3d_renderer\engine.cpp
+	"engine.hpp"
+	<math.h>
+	<iostream>
+	<cstring>
+
+1609893279 c:\dev\3d_renderer\engine.hpp
+	"geometry_structures.hpp"
+	<windows.h>
+
+1609885363 c:\dev\3d_renderer\geometry_structures.hpp
+	<vector>
+	<cstdint>
+
