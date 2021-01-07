@@ -106,6 +106,18 @@ void ConsoleEngine::DrawTriangle(const point_2d& point_1, const point_2d& point_
     DrawLine(point_3, point_1);
 }
 
+void ConsoleEngine::DrawMesh(const std::vector<projected_triangle>* mesh)
+{
+    for(int i = 0; i < mesh->size(); i++)
+    {
+        const projected_triangle& face = mesh->at(i);
+        point_2d p1 = { face.points[0].x, face.points[0].y };
+        point_2d p2 = { face.points[1].x, face.points[1].y };
+        point_2d p3 = { face.points[2].x, face.points[2].y };
+        DrawTriangle(p1, p2, p3);
+    }
+}
+
 void ConsoleEngine::DrawBottomFlatTriangle(const point_2d& point_1, const point_2d& point_2, const point_2d& point_3)
 {
 
