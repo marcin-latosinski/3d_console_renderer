@@ -5,12 +5,11 @@
 int main()
 {
     Application app;
-
-    app.DrawCube();
-
+    
     while(1)
     {
-
+        app.Update();
     }
+
     return 0;
 }

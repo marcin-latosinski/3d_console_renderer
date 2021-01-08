@@ -60,6 +60,56 @@ void ConsoleEngine::InitScreen()
     std::memset(buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
 }
 
+event_key ConsoleEngine::ReadFromConsoleInput()
+{
+    DWORD n_read_events = 0;
+    ReadConsoleInput(
+                input_hnd,
+                input_buffer,
+                128, 
+                &n_read_events);
+
+    event_key e_out;
+    while (n_read_events-- > 0)
+    {
+        INPUT_RECORD* e = &input_buffer[n_read_events];
+        if (e->EventType == KEY_EVENT && e->Event.KeyEvent.bKeyDown)
+        {
+            switch (e->Event.KeyEvent.wVirtualKeyCode)
+            {
+                case 0x57: //W Key
+                    e_out = EVENT_W;
+                    break;
+                case 0x53: //S Key
+                    e_out = EVENT_S;
+                    break;
+                case 0x41: //A Key
+                    e_out = EVENT_A;
+                    break;
+                case 0x44: //D Key
+                    e_out = EVENT_D;
+                    break;
+                case VK_UP:
+                    e_out = EVENT_UP;
+                    break;
+                case VK_DOWN:
+                    e_out = EVENT_DOWN;
+                    break;
+                case VK_LEFT:
+                    e_out = EVENT_LEFT;
+                    break;
+                case VK_RIGHT:
+                    e_out = EVENT_RIGHT;
+                    break;
+                default:
+                    e_out = EVENT_INVALID;
+                    break;
+            }
+        }
+    }
+    return e_out;
+}
+
 void ConsoleEngine::WriteToConsoleOutput()
 {
     if(!WriteConsoleOutput(output_hnd, buffer, console_size, {0, 0}, &window_size) )
@@ -67,6 +117,11 @@ void ConsoleEngine::WriteToConsoleOutput()
         DWORD err = GetLastError();
         std::printf("writeConsoleOutput failed! %d", err);
     }
+}
+
+void ConsoleEngine::ClearScreenBuffer()
+{
+    std::memset(buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
 }
 
 void ConsoleEngine::DrawPixel(const point_2d& point)

@@ -39,22 +39,27 @@ public:
         delete console_engine;
     }
 
-    void DrawCube()
+
+    void Update()
     {
-        projection_engine->RenderObject3D(&cube);
+        event_key e = console_engine->ReadFromConsoleInput();
+       
+        if(e != EVENT_INVALID)
+        {
+            projection_engine->TransformObject(&cube, e);
+        }
 
-        std::vector<projected_triangle>* rendered_mesh = projection_engine->GetProjectedMeshPtr();
-        console_engine->DrawMesh(rendered_mesh);
+        std::vector<projected_triangle> rendered_mesh;
+        projection_engine->RenderObject3D(&cube, &rendered_mesh);
 
+
+        console_engine->DrawMesh(&rendered_mesh);
         console_engine->WriteToConsoleOutput();
-    }
-
-    void OnElapsedTime(float time_elapsed)
-    {
-
+        console_engine->ClearScreenBuffer();
     }
 
 private:
+
     ConsoleEngine* console_engine;
     ProjectionEngine* projection_engine;
 

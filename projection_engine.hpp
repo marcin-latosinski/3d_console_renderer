@@ -24,6 +24,93 @@ public:
         return &projected_mesh;
     }
 
+    void TransformObject(object_3d* mesh, event_key e)
+    {
+        bool should_translate = false;
+        switch(e)
+        {
+            case EVENT_W:
+                mesh->translate(0.0f, -1.0f);
+                should_translate = true;
+            case EVENT_S:
+                mesh->translate(0.0f, 1.0f);
+                should_translate = true;
+            case EVENT_A:
+                mesh->translate(-1.0f, 0.0f);
+                should_translate = true;
+            case EVENT_D:
+                mesh->translate(1.0f, 0.0f);
+                should_translate = true;
+            default:
+                break;
+        }
+        if(should_translate)
+            TranslateObject3D(mesh);
+
+        bool should_rotate = false;
+        switch(e)
+        {
+            case EVENT_UP:
+                mesh->rotate_x(1.0f);
+                should_rotate = true;
+                break;
+            case EVENT_DOWN:
+                mesh->rotate_x(1.0f);
+                should_rotate = true;
+                break;
+            case EVENT_LEFT:
+                mesh->rotate_z(1.0f);
+                should_rotate = true;
+                break;
+            case EVENT_RIGHT:
+                mesh->rotate_z(-1.0f);
+                should_rotate = true;
+                break;
+            default:
+                break;
+        }
+        if (should_rotate)
+            RotateObject3D(mesh);
+    }
+
+    void RenderObject3D(object_3d* mesh, std::vector<projected_triangle>* result)
+    {
+        for (int face_idx = 0; face_idx < mesh->polygons.size(); face_idx++)
+        {
+            face_3d& face = mesh->polygons.at(face_idx);
+            CalcFaceNormal(face);
+            if ((face.normal.x * face.vertex[0].x +
+                 face.normal.y * face.vertex[0].y +
+                 face.normal.z * face.vertex[0].z ) < 0.0f)
+            {
+                projected_triangle projected;
+                for (int vec_idx = 0; vec_idx < N_VERTICES_IN_POLYGON; vec_idx++)
+                {
+                    vec_3d& vec_in_3d = face.vertex[vec_idx];
+                    projected.points[vec_idx] = Render3DPoint(vec_in_3d);
+                }
+                result->push_back(projected);
+            }
+        }
+        mesh->reset_matrices();
+    }
+
+    ~ProjectionEngine()
+    {
+
+    }
+
+private:
+
+    void SetupProjectionMatrix()
+    {
+        proj_mat.c[0][0] = (1.0f / std::tan((fov/2.0f) * M_PI/180.0f)) * aspect_ratio;
+        proj_mat.c[1][1] = 1.0f / std::tan((fov/2.0f) * M_PI/180.0f);
+        proj_mat.c[2][2] = (-1.0f * z_clip_far) / (z_clip_far - z_clip_near);
+        proj_mat.c[3][2] = (-1.0f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
+        proj_mat.c[2][3] = (-1.0f);
+    }
+
     void TranslateObject3D(object_3d* mesh)
     {
         std::vector<face_3d> translated_mesh;
@@ -58,43 +145,6 @@ public:
         mesh->polygons = rotated_mesh;
     }
 
-    void RenderObject3D(object_3d* mesh)
-    {
-        for (int face_idx = 0; face_idx < mesh->polygons.size(); face_idx++)
-        {
-            face_3d& face = mesh->polygons.at(face_idx);
-            CalcFaceNormal(face);
-            if ((face.normal.x * face.vertex[0].x +
-                 face.normal.y * face.vertex[0].y +
-                 face.normal.z * face.vertex[0].z ) > 0.0f)
-            {
-                projected_triangle projected;
-                for (int vec_idx = 0; vec_idx < N_VERTICES_IN_POLYGON; vec_idx++)
-                {
-                    vec_3d& vec_in_3d = face.vertex[vec_idx];
-                    projected.points[vec_idx] = Render3DPoint(vec_in_3d);
-                }
-                projected_mesh.push_back(projected);
-            }
-        }
-    }
-
-    ~ProjectionEngine()
-    {
-
-    }
-
-private:
-
-    void SetupProjectionMatrix()
-    {
-        proj_mat.c[0][0] = (1.0f / std::tan((fov/2.0f) * M_PI/180.0f)) * aspect_ratio;
-        proj_mat.c[1][1] = 1.0f / std::tan((fov/2.0f) * M_PI/180.0f);
-        proj_mat.c[2][2] = (-1.0f * z_clip_far) / (z_clip_far - z_clip_near);
-        proj_mat.c[3][2] = (-1.0f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
-        proj_mat.c[2][3] = (-1.0f);
-    }
-
     void CalcFaceNormal(face_3d& in)
     {
         vec_3d line1, line2;
@@ -116,11 +166,6 @@ private:
         in.normal.x /= length;
         in.normal.y /= length;
         in.normal.z /= length;
-    }
-
-    vec_3d Translate3DPoint(vec_3d& in)
-    {
-
     }
 
     vec_3d VectMatrixMultiply(vec_3d& in, matrix_4x4& mat)
@@ -159,8 +204,6 @@ private:
     }
 
     matrix_4x4 proj_mat;
-    matrix_4x4 trans_mat;
-    matrix_4x4 rot_mat;
 
     uint16_t width;
     uint16_t height;
