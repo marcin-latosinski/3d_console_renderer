@@ -49,12 +49,12 @@ struct object_3d
         rotat_mat.c[2][2] = 1;
         rotat_mat.c[3][3] = 1;
     }
-    void rotate_x(float angle)
+    void rotate_y(float angle)
     {
-		rotat_mat.c[0][0] = 1;
-		rotat_mat.c[1][1] = std::cos(angle);
-		rotat_mat.c[1][2] = std::sin(angle);
-		rotat_mat.c[2][1] = -std::sin(angle);
+		rotat_mat.c[0][0] = std::cos(angle);
+		rotat_mat.c[1][1] = 1;
+		rotat_mat.c[1][2] = -std::sin(angle);
+		rotat_mat.c[2][1] = std::sin(angle);
 		rotat_mat.c[2][2] = std::cos(angle);
 		rotat_mat.c[3][3] = 1;
     }

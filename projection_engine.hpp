@@ -55,11 +55,11 @@ public:
         switch(e)
         {
             case EVENT_UP:
-                mesh->rotate_x(0.1f);
+                mesh->rotate_y(0.1f);
                 should_rotate = true;
                 break;
             case EVENT_DOWN:
-                mesh->rotate_x(0.1f);
+                mesh->rotate_y(-0.1f);
                 should_rotate = true;
                 break;
             case EVENT_LEFT:
@@ -115,12 +115,13 @@ private:
 
     bool CheckForClipping(projected_triangle tri)
     {
-        bool is_clipping;
+        bool is_clipping = false;
         for (int v_idx = 0; v_idx < N_VERTICES_IN_POLYGON; v_idx++)
         {
-            uint16_t x = ( tri.points[v_idx].x + 1.f ) * 0.5f * (float)width;
-            uint16_t y = ( tri.points[v_idx].y + 1.f ) * 0.5f * (float)height;
-            is_clipping &= x >= width && y >= height;
+            uint16_t x = tri.points[v_idx].x;
+            uint16_t y = tri.points[v_idx].y;
+            if( x >= width | y >= height | x < 0 | y < 0 )
+                is_clipping = true;
         }
         return is_clipping;
     }
