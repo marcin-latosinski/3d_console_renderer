@@ -22,10 +22,10 @@ public:
     void DrawCube()
     {
         object_3d* test_mesh = projection_engine->GetCubePtr();
-        projection_engine->ProjectObject3D(test_mesh);
-        std::vector<projected_triangle>* projected_mesh = projection_engine->GetProjectedMeshPtr();
+        projection_engine->RenderObject3D(test_mesh);
+        std::vector<projected_triangle>* rendered_mesh = projection_engine->GetProjectedMeshPtr();
 
-        console_engine->DrawMesh(projected_mesh);
+        console_engine->DrawMesh(rendered_mesh);
 
         console_engine->WriteToConsoleOutput();
     }
