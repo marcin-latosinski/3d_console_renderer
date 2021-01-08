@@ -17,29 +17,29 @@ public:
         ConsoleEngine::GetScreenSize(width, height);
 
         fov = 90.0f;
-        aspect_ratio = height/width;
+        aspect_ratio = (float)height / (float)width;
         z_clip_near = 0.1f;
         z_clip_far  = 100.0f;
 
         // STATIC DEFINED TEST 3D MESH
         cube.polygons = {// SOUTH
-                        {{ {0.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f},  {1.0f, 1.0f, 0.0f} }},
-                        {{ {0.0f, 0.0f, 0.0f},  {1.0f, 1.0f, 0.0f},  {1.0f, 0.0f, 0.0f} }},
+                        {{ {0.0f, 0.0f, -18.0f},  {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -18.0f} }},
+                        {{ {0.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }},
                          // EAST
-                        {{ {1.0f, 0.0f, 0.0f},  {1.0f, 1.0f, 0.0f},  {1.0f, 1.0f, 1.0f} }},
-                        {{ {1.0f, 0.0f, 0.0f},  {1.0f, 1.0f, 1.0f},  {1.0f, 0.0f, 1.0f} }},
+                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f} }},
+                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 0.0f, -28.0f} }},
                          // NORTH
-                        {{ {1.0f, 0.0f, 1.0f},  {1.0f, 1.0f, 1.0f},  {0.0f, 1.0f, 1.0f} }},
-                        {{ {1.0f, 0.0f, 1.0f},  {0.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 1.0f} }},
+                        {{ {10.0f, 0.0f, -28.0f},  {10.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -28.0f} }},
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 0.0f, -28.0f} }},
                          // WEST
-                        {{ {0.0f, 0.0f, 1.0f},  {0.0f, 1.0f, 1.0f},  {0.0f, 1.0f, 0.0f} }},
-                        {{ {0.0f, 0.0f, 1.0f},  {0.0f, 1.0f, 0.0f},  {0.0f, 0.0f, 0.0f} }},
+                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -18.0f} }},
+                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -18.0f},  {0.0f, 0.0f, -18.0f} }},
                          // TOP
-                        {{ {0.0f, 1.0f, 0.0f},  {0.0f, 1.0f, 1.0f},  {1.0f, 1.0f, 1.0f} }},
-                        {{ {0.0f, 1.0f, 0.0f},  {1.0f, 1.0f, 1.0f},  {1.0f, 1.0f, 0.0f} }},
+                        {{ {0.0f, 10.0f, -18.0f},  {0.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -28.0f} }},
+                        {{ {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -18.0f} }},
                          // BOTTOM
-                        {{ {1.0f, 0.0f, 1.0f},  {0.0f, 0.0f, 1.0f},  {0.0f, 0.0f, 0.0f} }},
-                        {{ {1.0f, 0.0f, 1.0f},  {0.0f, 0.0f, 0.0f},  {1.0f, 0.0f, 0.0f} }} };
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f} }},
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }} };
 
         SetupProjectionMatrix();
 
@@ -79,8 +79,8 @@ private:
 
     void SetupProjectionMatrix()
     {
-        proj_mat.c[0][0] = (1.0f / tan((fov/2.0f) * M_PI/180.0f)) * aspect_ratio;
-        proj_mat.c[1][1] = 1.0f / tan((fov/2.0f) * M_PI/180.0f);
+        proj_mat.c[0][0] = (1.0f / std::tan((fov/2.0f) * M_PI/180.0f)) * aspect_ratio;
+        proj_mat.c[1][1] = 1.0f / std::tan((fov/2.0f) * M_PI/180.0f);
         proj_mat.c[2][2] = (-1.0f * z_clip_far) / (z_clip_far - z_clip_near);
         proj_mat.c[3][2] = (-1.0f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
         proj_mat.c[2][3] = (-1.0f);
@@ -98,7 +98,7 @@ private:
         x = ( x + 1.f ) * 0.5f * (float)width;
         y = ( y + 1.f ) * 0.5f * (float)height;
 
-        if (w < 1.f && w > 0.f)
+        if (w > 0.f)
         {
             x /= w;
             y /= w;
