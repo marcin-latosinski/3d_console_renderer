@@ -62,51 +62,49 @@ void ConsoleEngine::InitScreen()
 
 event_key ConsoleEngine::ReadFromConsoleInput()
 {
-    DWORD n_read_events = 0;
+    DWORD n_read_events = 0; //unused as we read only one input at a time
     ReadConsoleInput(
                 input_hnd,
-                input_buffer,
-                128, 
+                &input_buffer,
+                1, 
                 &n_read_events);
 
-    event_key e_out;
-    while (n_read_events-- > 0)
+    event_key e_out = EVENT_INVALID;
+    INPUT_RECORD* e = &input_buffer;
+    if (e->EventType == KEY_EVENT && e->Event.KeyEvent.bKeyDown)
     {
-        INPUT_RECORD* e = &input_buffer[n_read_events];
-        if (e->EventType == KEY_EVENT && e->Event.KeyEvent.bKeyDown)
+        switch (e->Event.KeyEvent.wVirtualKeyCode)
         {
-            switch (e->Event.KeyEvent.wVirtualKeyCode)
-            {
-                case 0x57: //W Key
-                    e_out = EVENT_W;
-                    break;
-                case 0x53: //S Key
-                    e_out = EVENT_S;
-                    break;
-                case 0x41: //A Key
-                    e_out = EVENT_A;
-                    break;
-                case 0x44: //D Key
-                    e_out = EVENT_D;
-                    break;
-                case VK_UP:
-                    e_out = EVENT_UP;
-                    break;
-                case VK_DOWN:
-                    e_out = EVENT_DOWN;
-                    break;
-                case VK_LEFT:
-                    e_out = EVENT_LEFT;
-                    break;
-                case VK_RIGHT:
-                    e_out = EVENT_RIGHT;
-                    break;
-                default:
-                    e_out = EVENT_INVALID;
-                    break;
-            }
+            case 0x57: //W Key
+                e_out = EVENT_W;
+                break;
+            case 0x53: //S Key
+                e_out = EVENT_S;
+                break;
+            case 0x41: //A Key
+                e_out = EVENT_A;
+                break;
+            case 0x44: //D Key
+                e_out = EVENT_D;
+                break;
+            case VK_UP:
+                e_out = EVENT_UP;
+                break;
+            case VK_DOWN:
+                e_out = EVENT_DOWN;
+                break;
+            case VK_LEFT:
+                e_out = EVENT_LEFT;
+                break;
+            case VK_RIGHT:
+                e_out = EVENT_RIGHT;
+                break;
+            default:
+                e_out = EVENT_INVALID;
+                break;
         }
     }
+    FlushConsoleInputBuffer(input_hnd);
     return e_out;
 }
 

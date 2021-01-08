@@ -59,7 +59,7 @@ private:
     static uint16_t screen_height;
 
     HANDLE input_hnd;
-    INPUT_RECORD input_buffer[128];
+    INPUT_RECORD input_buffer;
 
     HANDLE output_hnd;
     HWND window_hnd;

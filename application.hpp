@@ -47,6 +47,7 @@ public:
         if(e != EVENT_INVALID)
         {
             projection_engine->TransformObject(&cube, e);
+            cube.reset_matrices();
         }
 
         std::vector<projected_triangle> rendered_mesh;

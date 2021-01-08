@@ -32,15 +32,19 @@ public:
             case EVENT_W:
                 mesh->translate(0.0f, -1.0f);
                 should_translate = true;
+                break;
             case EVENT_S:
                 mesh->translate(0.0f, 1.0f);
                 should_translate = true;
+                break;
             case EVENT_A:
                 mesh->translate(-1.0f, 0.0f);
                 should_translate = true;
+                break;
             case EVENT_D:
                 mesh->translate(1.0f, 0.0f);
                 should_translate = true;
+                break;
             default:
                 break;
         }
@@ -51,19 +55,19 @@ public:
         switch(e)
         {
             case EVENT_UP:
-                mesh->rotate_x(1.0f);
+                mesh->rotate_x(0.1f);
                 should_rotate = true;
                 break;
             case EVENT_DOWN:
-                mesh->rotate_x(1.0f);
+                mesh->rotate_x(0.1f);
                 should_rotate = true;
                 break;
             case EVENT_LEFT:
-                mesh->rotate_z(1.0f);
+                mesh->rotate_z(0.1f);
                 should_rotate = true;
                 break;
             case EVENT_RIGHT:
-                mesh->rotate_z(-1.0f);
+                mesh->rotate_z(-0.1f);
                 should_rotate = true;
                 break;
             default:
@@ -79,9 +83,7 @@ public:
         {
             face_3d& face = mesh->polygons.at(face_idx);
             CalcFaceNormal(face);
-            if ((face.normal.x * face.vertex[0].x +
-                 face.normal.y * face.vertex[0].y +
-                 face.normal.z * face.vertex[0].z ) < 0.0f)
+            if ( CheckFaceVisibility(face) )
             {
                 projected_triangle projected;
                 for (int vec_idx = 0; vec_idx < N_VERTICES_IN_POLYGON; vec_idx++)
@@ -89,10 +91,10 @@ public:
                     vec_3d& vec_in_3d = face.vertex[vec_idx];
                     projected.points[vec_idx] = Render3DPoint(vec_in_3d);
                 }
-                result->push_back(projected);
+                if (!CheckForClipping(projected))
+                    result->push_back(projected);
             }
         }
-        mesh->reset_matrices();
     }
 
     ~ProjectionEngine()
@@ -109,6 +111,27 @@ private:
         proj_mat.c[2][2] = (-1.0f * z_clip_far) / (z_clip_far - z_clip_near);
         proj_mat.c[3][2] = (-1.0f * z_clip_far * z_clip_near) / (z_clip_far - z_clip_near);
         proj_mat.c[2][3] = (-1.0f);
+    }
+
+    bool CheckForClipping(projected_triangle tri)
+    {
+        bool is_clipping;
+        for (int v_idx = 0; v_idx < N_VERTICES_IN_POLYGON; v_idx++)
+        {
+            uint16_t x = ( tri.points[v_idx].x + 1.f ) * 0.5f * (float)width;
+            uint16_t y = ( tri.points[v_idx].y + 1.f ) * 0.5f * (float)height;
+            is_clipping &= x >= width && y >= height;
+        }
+        return is_clipping;
+    }
+
+    bool CheckFaceVisibility(face_3d& face)
+    {
+        bool is_visible = (face.normal.x * face.vertex[0].x +
+                           face.normal.y * face.vertex[0].y +
+                           face.normal.z * face.vertex[0].z ) > 0.0f;
+
+        return is_visible;
     }
 
     void TranslateObject3D(object_3d* mesh)
@@ -171,10 +194,10 @@ private:
     vec_3d VectMatrixMultiply(vec_3d& in, matrix_4x4& mat)
     {
         vec_3d out;
-        out.x   = in.x * proj_mat.c[0][0] + in.y * proj_mat.c[1][0] + in.z * proj_mat.c[2][0] + proj_mat.c[3][0];
-        out.y   = in.x * proj_mat.c[0][1] + in.y * proj_mat.c[1][1] + in.z * proj_mat.c[2][1] + proj_mat.c[3][1];
-        out.z   = in.x * proj_mat.c[0][2] + in.y * proj_mat.c[1][2] + in.z * proj_mat.c[2][2] + proj_mat.c[3][2];
-        float w = in.x * proj_mat.c[0][3] + in.y * proj_mat.c[1][3] + in.z * proj_mat.c[2][3] + proj_mat.c[3][3];
+        out.x   = in.x * mat.c[0][0] + in.y * mat.c[1][0] + in.z * mat.c[2][0] + mat.c[3][0];
+        out.y   = in.x * mat.c[0][1] + in.y * mat.c[1][1] + in.z * mat.c[2][1] + mat.c[3][1];
+        out.z   = in.x * mat.c[0][2] + in.y * mat.c[1][2] + in.z * mat.c[2][2] + mat.c[3][2];
+        float w = in.x * mat.c[0][3] + in.y * mat.c[1][3] + in.z * mat.c[2][3] + mat.c[3][3];
 
         if (w > 0.f)
         {
