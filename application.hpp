@@ -11,6 +11,26 @@ public:
         // ConsoleEngine must be created before ProjectionEngine
         console_engine    = new ConsoleEngine();
         projection_engine = new ProjectionEngine();
+
+        // STATIC DEFINED TEST 3D MESH
+        cube.polygons = {// SOUTH
+                        {{ {0.0f, 0.0f, -18.0f},  {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -18.0f} }},
+                        {{ {0.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }},
+                         // EAST
+                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f} }},
+                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 0.0f, -28.0f} }},
+                         // NORTH
+                        {{ {10.0f, 0.0f, -28.0f},  {10.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -28.0f} }},
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 0.0f, -28.0f} }},
+                         // WEST
+                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -18.0f} }},
+                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -18.0f},  {0.0f, 0.0f, -18.0f} }},
+                         // TOP
+                        {{ {0.0f, 10.0f, -18.0f},  {0.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -28.0f} }},
+                        {{ {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -18.0f} }},
+                         // BOTTOM
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f} }},
+                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }} };
     }
 
     ~Application()
@@ -21,10 +41,9 @@ public:
 
     void DrawCube()
     {
-        object_3d* test_mesh = projection_engine->GetCubePtr();
-        projection_engine->RenderObject3D(test_mesh);
-        std::vector<projected_triangle>* rendered_mesh = projection_engine->GetProjectedMeshPtr();
+        projection_engine->RenderObject3D(&cube);
 
+        std::vector<projected_triangle>* rendered_mesh = projection_engine->GetProjectedMeshPtr();
         console_engine->DrawMesh(rendered_mesh);
 
         console_engine->WriteToConsoleOutput();
@@ -36,7 +55,8 @@ public:
     }
 
 private:
-
     ConsoleEngine* console_engine;
     ProjectionEngine* projection_engine;
+
+    object_3d cube;
 };

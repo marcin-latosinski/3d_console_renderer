@@ -16,33 +16,7 @@ public:
         z_clip_near = 0.1f;
         z_clip_far  = 100.0f;
 
-        // STATIC DEFINED TEST 3D MESH
-        cube.polygons = {// SOUTH
-                        {{ {0.0f, 0.0f, -18.0f},  {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -18.0f} }},
-                        {{ {0.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }},
-                         // EAST
-                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f} }},
-                        {{ {10.0f, 0.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 0.0f, -28.0f} }},
-                         // NORTH
-                        {{ {10.0f, 0.0f, -28.0f},  {10.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -28.0f} }},
-                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 0.0f, -28.0f} }},
-                         // WEST
-                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -28.0f},  {0.0f, 10.0f, -18.0f} }},
-                        {{ {0.0f, 0.0f, -28.0f},  {0.0f, 10.0f, -18.0f},  {0.0f, 0.0f, -18.0f} }},
-                         // TOP
-                        {{ {0.0f, 10.0f, -18.0f},  {0.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -28.0f} }},
-                        {{ {0.0f, 10.0f, -18.0f},  {10.0f, 10.0f, -28.0f},  {10.0f, 10.0f, -18.0f} }},
-                         // BOTTOM
-                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f} }},
-                        {{ {10.0f, 0.0f, -28.0f},  {0.0f, 0.0f, -18.0f},  {10.0f, 0.0f, -18.0f} }} };
-
         SetupProjectionMatrix();
-
-    }
-
-    object_3d* GetCubePtr()
-    {
-        return &cube;
     }
 
     std::vector<projected_triangle>* GetProjectedMeshPtr()
@@ -169,8 +143,6 @@ private:
 
     point_2d Render3DPoint(vec_3d& in)
     {
-
-
         //3D to 2D projection
         vec_3d projected = VectMatrixMultiply(in, proj_mat);
 
@@ -196,8 +168,6 @@ private:
     float aspect_ratio;
     float z_clip_near;
     float z_clip_far;
-
-    object_3d cube;
 
     std::vector<projected_triangle> projected_mesh;
 };
